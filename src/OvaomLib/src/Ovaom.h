@@ -9,7 +9,7 @@
 #include <Wire.h>
 
 // Software Versions
-#define LIB_VERSION "Ovaom Lib 2.1.1"
+#define LIB_VERSION "Ovaom Lib 2.1.2"
   
 // Hardware PCB Versions 
 // Differences in hardware wiring of preset button and LED
@@ -20,11 +20,11 @@
 
 // Tweak these parameters to ajust sensitivity
 #define SAMPLING_FREQ 			15 		// in milliseconds
-#define AVERAGING_BUFFER_SIZE	250 	// values are averaged in an int array of this size 
+#define AVERAGING_BUFFER_SIZE	100 	// values are averaged in an int array of this size 
 #define ACTIVE_THRESHOLD 		1200
-#define IDLE_THRESHOLD			80
+#define IDLE_THRESHOLD			100
 #define ACTIVE_TRIG_TIME 		500
-#define IDLE_TRIG_TIME 			1000
+#define IDLE_TRIG_TIME 			500
 
 
 // Object State
@@ -36,6 +36,8 @@
 #define CONNECTING 1
 #define CONNECTED 2
 #define LOW_BATTERY 3
+#define DEBUG_ACTIVE 4
+#define DEBUG_IDLE 5
 
 // Battery
 #define BATTERY_INTERVAL 10000 // 300000=5mins
