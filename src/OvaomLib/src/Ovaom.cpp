@@ -50,7 +50,9 @@ void Ovaom::connectWifi()
 void Ovaom::sendPing() {
   unsigned long currentMillis = millis();
   if (currentMillis - _prevPing > 1000) {
-    sendOscMessage("/ping", _objectUID);
+    OSCMessage m("/ping");
+    m.add(_objectUID).add(getObjectState());
+    sendOscMessage(&m);
     _prevPing = millis();
   }
 }
@@ -188,12 +190,14 @@ void Ovaom::checkObjectState() {
     {
       // => Object is IDLE //
       _objectState = IDLE;
+      displayMode = DEBUG_IDLE;
       _stableStateTime = millis();
     }
     else if (_instantObjectState == ACTIVE && millis() - _stableStateTime > ACTIVE_TRIG_TIME) 
     {
       // => Object is ACTIVE //
       _objectState = ACTIVE;
+      displayMode = DEBUG_ACTIVE;
       _stableStateTime = millis();
     }
   }
@@ -278,7 +282,8 @@ void Ovaom::updateLed() {
   switch (displayMode)
   {
     case CONNECTING:
-      if (currentMillis - _prevLedMillis > 250 ) {
+      if (currentMillis - _prevLedMillis > 250 ) 
+      {
         _prevLedMillis = currentMillis;
         if (_ledState == _ledOFF)
           _ledState = _ledON;
@@ -296,14 +301,38 @@ void Ovaom::updateLed() {
       break;
     
     case LOW_BATTERY:
-      if (currentMillis - _prevLedMillis > 50 ) {
-        _prevLedMillis = currentMillis;
-        if (_ledState == _ledOFF)
-          _ledState = _ledON;
-        else
-          _ledState = _ledOFF;
-      }
+      // if (currentMillis - _prevLedMillis > 50 ) 
+      // {
+      //   _prevLedMillis = currentMillis;
+      //   if (_ledState == _ledOFF)
+      //     _ledState = _ledON;
+      //   else
+      //     _ledState = _ledOFF;
+      // }
       break;
+
+    case DEBUG_ACTIVE:
+    if (currentMillis - _prevLedMillis > 50 ) 
+    {
+      _prevLedMillis = currentMillis;
+      if (_ledState == _ledOFF)
+        _ledState = _ledON;
+      else
+        _ledState = _ledOFF;
+    }
+    break;
+
+    case DEBUG_IDLE:
+    if (currentMillis - _prevLedMillis > 200 ) 
+    {
+      _prevLedMillis = currentMillis;
+      if (_ledState == _ledOFF)
+        _ledState = _ledON;
+      else
+        _ledState = _ledOFF;
+    }
+    break;  
+    
     default:
       break;
   }
@@ -335,7 +364,7 @@ int Ovaom::batteryLevel() {
 
   // Serial.print("Battery level: "); Serial.print(level); Serial.println("%");
   sendOscMessage("/battery", level);
-  if (level <= 25)
+  if (level <= 20)
     return (LOW);
   else
     return (HIGH);

@@ -2,9 +2,16 @@
 
 ##[Unreleased]
 
-## Added 
 
+##[2.1.2] 2019-01-05
+
+### Added 
 - getAvg() and getRMS() function
+- Add LED debug display
+
+### Changed
+- Objects go to sleep faster
+- Send object state with Ping
 
 
 ##[2.1.1] 2018-12-28
