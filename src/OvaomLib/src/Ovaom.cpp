@@ -168,7 +168,7 @@ void Ovaom::checkObjectState() {
   _mpu_buff_idx = (_mpu_buff_idx + 1) % _mpu_buffer_max;
   double avg = getAvg(_mpu_buffer, _mpu_buffer_max);
 
-  Serial.printf("%d %d %d %d\n", 0, ACTIVE_THRESHOLD, IDLE_THRESHOLD, (int)avg);
+  // Serial.printf("%d %d %d %d\n", 0, ACTIVE_THRESHOLD, IDLE_THRESHOLD, (int)avg);
 
   if (avg > ACTIVE_THRESHOLD)
     _instantObjectState = ACTIVE;
