@@ -87,8 +87,8 @@ void readJoystick() {
   }
 }
 
-#define PRESSURE_THRESHOLD 4.0
-#define P_BUFF_LEN 10
+#define PRESSURE_THRESHOLD 3.1
+#define P_BUFF_LEN 50
 double  avgPressure, prev_avgPressure;
 int16_t pressureBuff[P_BUFF_LEN];
 int buffIdx = 0;
@@ -114,11 +114,11 @@ void readBMP180()
 {
   pressureBuff[buffIdx] = (int16_t)(bmp.readPressure() - referencePressure);
   buffIdx = (buffIdx + 1) % P_BUFF_LEN;
-  double avgPressure = ovaom.getRMS(pressureBuff, P_BUFF_LEN);
+  double avgPressure = ovaom.getAvg(pressureBuff, P_BUFF_LEN);
 
   if ( abs(avgPressure - prev_avgPressure) > PRESSURE_THRESHOLD) {
     Serial.println(avgPressure);
-    data[2] = ovaom.mapfloat((float)avgPressure, 0.0, 300.0, 0.0, 1.0);
+    data[2] = ovaom.mapfloat((float)avgPressure, 0.0, 400.0, 0.0, 1.0);
     ovaom.dataLimiter(&data[2], 0.0, 1.0);
     ovaom.sensorDataHasChanged = true;
     prev_avgPressure = avgPressure;
