@@ -22,7 +22,8 @@ uint16_t currtouched = 0;
 /*****************/
 /*     SETUP     */
 /*****************/
-void setup(){
+void setup()
+{
   Serial.begin(115200);
   ovaom.setupLed(16);
   ovaom.updateLed();
@@ -38,8 +39,39 @@ void setup(){
     while (1);
   }
   Serial.println("MPR121 found!");
-  cap.writeRegister(MPR121_DEBOUNCE, 0x07);
-  cap.setThreshholds(60, 30);
+  setupTouch();
+}
+
+void setupTouch()
+{
+  //_____ Soft reset _____
+  cap.writeRegister(MPR121_SOFTRESET, 0x63);
+  delay(1);
+  for (uint8_t i=0; i<0x7F; i++) {
+   Serial.print("$"); Serial.print(i, HEX); 
+   Serial.print(": 0x"); Serial.println(cap.readRegister8(i));
+  }
+
+  cap.setThreshholds(12, 6);
+  cap.writeRegister(MPR121_MHDR, 0x01); //Maximum Half Delta
+  cap.writeRegister(MPR121_NHDR, 0x01); //Noise Half Delta
+  cap.writeRegister(MPR121_NCLR, 0x0E); //Noise Count Limit 
+  cap.writeRegister(MPR121_FDLR, 0x00); //Filter Delay Count Limit
+
+  cap.writeRegister(MPR121_MHDF, 0x01);
+  cap.writeRegister(MPR121_NHDF, 0x05);
+  cap.writeRegister(MPR121_NCLF, 0x01);
+  cap.writeRegister(MPR121_FDLF, 0xFF);
+
+  cap.writeRegister(MPR121_NHDT, 0x00);
+  cap.writeRegister(MPR121_NCLT, 0x00);
+  cap.writeRegister(MPR121_FDLT, 0x00);
+
+  cap.writeRegister(MPR121_DEBOUNCE, 0);
+  cap.writeRegister(MPR121_CONFIG1, 0x10); // default, 16uA charge current
+  cap.writeRegister(MPR121_CONFIG2, 0x20); // 0.5uS encoding, 1ms period
+
+  cap.writeRegister(MPR121_ECR, 0x8F); // start
 }
 
 
