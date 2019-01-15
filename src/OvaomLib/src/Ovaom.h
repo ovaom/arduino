@@ -22,10 +22,10 @@
 #define SAMPLING_FREQ 			15 		// in milliseconds
 #define AVERAGING_BUFFER_SIZE	5 	// values are averaged in an int array of this size 
 // Detect ACTIVE
-#define ACTIVE_THRESHOLD 		20000
+#define ACTIVE_THRESHOLD 		15000
 #define ACTIVE_TRIG_TIME 		400
 // Detect IDLE
-#define IDLE_THRESHOLD			80
+#define IDLE_THRESHOLD			90
 #define IDLE_TRIG_TIME 			300
 
 
@@ -145,6 +145,9 @@ private:
 	int16_t           	_ledState = LOW;
 	int16_t			  	_ledON = 1;
 	int16_t			 	_ledOFF = 0;
+
+	// Battery
+	int16_t				_battery_level;
 
 };
 

@@ -75,7 +75,8 @@ void loop(){
 
 #define JOYSTICK_THRESHOLD 12
 int32_t joystick[2], prevJoystick[2];
-void readJoystick() {
+void readJoystick() 
+{
   for(int16_t i = 0; i < 2; i++) 
   {
     joystick[i] = ads.readADC_SingleEnded(i);
@@ -119,7 +120,8 @@ void readBMP180()
   buffIdx = (buffIdx + 1) % P_BUFF_LEN;
   double avgPressure = ovaom.getAvg(pressureBuff, P_BUFF_LEN);
 
-  if ( abs(avgPressure - prev_avgPressure) > PRESSURE_THRESHOLD) {
+  if ( abs(avgPressure - prev_avgPressure) > PRESSURE_THRESHOLD ) 
+  {
     Serial.println(avgPressure);
     data[2] = ovaom.mapfloat((float)avgPressure, 0.0, 500.0, 0.0, 1.0);
     ovaom.dataLimiter(&data[2], 0.0, 1.0);
@@ -130,7 +132,8 @@ void readBMP180()
 
 String paramAddress = "/object/" + String(OBJECT_UID) + "/params";
 OSCMessage params(paramAddress.c_str());
-void sendData() {
+void sendData() 
+{
   if (ovaom.getObjectState() == IDLE)
     ovaom.sensorDataHasChanged = false;
   if (ovaom.sensorDataHasChanged) {

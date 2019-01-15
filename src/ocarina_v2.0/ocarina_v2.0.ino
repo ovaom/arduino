@@ -106,7 +106,7 @@ void loop(){
 
 void touchSensing() 
 {
-  // ovaom.sensorIsActive = false;
+  ovaom.sensorIsActive = false;
   // Get the currently touched pads
   currtouched = cap.touched();
   
@@ -127,7 +127,7 @@ void touchSensing()
       ovaom.sensorDataHasChanged = true;
     }
     if (data[i] > 0)
-      // ovaom.sensorIsActive = true;
+      ovaom.sensorIsActive = true;
   }
   lasttouched = currtouched;
 }

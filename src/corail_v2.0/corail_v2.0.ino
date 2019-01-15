@@ -80,10 +80,8 @@ void  getPressure()
       ovaom.sensorDataHasChanged = true;
       prev_adc[i] = adc[i];
     }
-    if (data[i] > 0.008) 
-    {
+    if (data[i] > 0.008)
       ovaom.sensorIsActive = true;
-    }
   }
 }
 

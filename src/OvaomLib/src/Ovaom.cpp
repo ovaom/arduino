@@ -374,8 +374,9 @@ int Ovaom::batteryLevel() {
   level = map(level, 690, 780, 0, 100); //empirical v3
 
   // Serial.print("Battery level: "); Serial.print(level); Serial.println("%");
+  this->_battery_level = level;
   sendOscMessage("/battery", level);
-  if (level <= 20)
+  if (level <= 30)
     return (LOW);
   else
     return (HIGH);
