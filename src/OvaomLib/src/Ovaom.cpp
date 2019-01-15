@@ -169,16 +169,27 @@ void Ovaom::checkObjectState() {
   double avg = getAvg(_mpu_buffer, _mpu_buffer_max);
 
   // Serial.printf("%d %d %d %d\n", 0, ACTIVE_THRESHOLD, IDLE_THRESHOLD, (int)avg);
-
-  if (avg > ACTIVE_THRESHOLD)
-    _instantObjectState = ACTIVE;
-  else if (_objectState == ACTIVE && sensorDataHasChanged) { 
-    _instantObjectState = ACTIVE;
+  // Serial.printf("%d %d %d\n", 0, IDLE_THRESHOLD, (int)avg);
+  
+  switch (_objectState)
+  {
+    case ACTIVE:
+      if (avg > IDLE_THRESHOLD || this->sensorDataHasChanged || this->sensorIsActive)
+        _instantObjectState = ACTIVE;
+      else if (avg < IDLE_THRESHOLD )
+        _instantObjectState = IDLE;
+      break;
+    
+    case IDLE:
+      if (avg > ACTIVE_THRESHOLD) 
+        _instantObjectState = ACTIVE;
+      else if (avg < IDLE_THRESHOLD || avg < ACTIVE_THRESHOLD)
+        _instantObjectState = IDLE;
+      break;
+  
+    default:
+      break;
   }
-  else if (_objectState == ACTIVE && avg > IDLE_THRESHOLD)
-    _instantObjectState = ACTIVE;
-  else if (avg < IDLE_THRESHOLD)
-    _instantObjectState = IDLE;
 
   if (_instantObjectState != _prevInstantState)
   {
@@ -201,7 +212,7 @@ void Ovaom::checkObjectState() {
       _stableStateTime = millis();
     }
   }
-  // Serial.printf("%u %u\n", _instantObjectState, _objectState);
+  Serial.printf("%u %u\n", _instantObjectState, _objectState);
   _prevInstantState = _instantObjectState;
 }
 
