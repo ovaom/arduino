@@ -51,7 +51,7 @@ void Ovaom::sendPing() {
   unsigned long currentMillis = millis();
   if (currentMillis - _prevPing > 1000) {
     OSCMessage m("/ping");
-    m.add(_objectUID).add(getObjectState());
+    m.add(_objectUID).add(getObjectState()).add(_battery_level) ;
     sendOscMessage(&m);
     _prevPing = millis();
   }
@@ -293,7 +293,7 @@ void Ovaom::updateLed() {
   switch (displayMode)
   {
     case CONNECTING:
-      if (currentMillis - _prevLedMillis > 250 ) 
+      if (currentMillis - _prevLedMillis > 50 ) 
       {
         _prevLedMillis = currentMillis;
         if (_ledState == _ledOFF)
@@ -312,29 +312,23 @@ void Ovaom::updateLed() {
       break;
     
     case LOW_BATTERY:
-      // if (currentMillis - _prevLedMillis > 50 ) 
-      // {
-      //   _prevLedMillis = currentMillis;
-      //   if (_ledState == _ledOFF)
-      //     _ledState = _ledON;
-      //   else
-      //     _ledState = _ledOFF;
-      // }
+      if (currentMillis - _prevLedMillis > 50 ) 
+      {
+        _prevLedMillis = currentMillis;
+        if (_ledState == _ledOFF)
+          _ledState = _ledON;
+        else
+          _ledState = _ledOFF;
+      }
       break;
 
     case DEBUG_ACTIVE:
-    if (currentMillis - _prevLedMillis > 50 ) 
-    {
-      _prevLedMillis = currentMillis;
-      if (_ledState == _ledOFF)
-        _ledState = _ledON;
-      else
-        _ledState = _ledOFF;
-    }
+      _ledState = _ledON;
+        break;
     break;
 
     case DEBUG_IDLE:
-    if (currentMillis - _prevLedMillis > 200 ) 
+    if (currentMillis - _prevLedMillis > 700 ) 
     {
       _prevLedMillis = currentMillis;
       if (_ledState == _ledOFF)
@@ -350,8 +344,8 @@ void Ovaom::updateLed() {
   digitalWrite(_ledPin, _ledState);
 }
 
-int Ovaom::batteryLevel() {
- 
+int Ovaom::batteryLevel() 
+{ 
   // read the battery level from the ESP8266 analog in pin.
   // analog read level is 10 bit 0-1023 (0V-1V).
   // our 1M & 220K voltage divider takes the max
@@ -375,7 +369,7 @@ int Ovaom::batteryLevel() {
 
   // Serial.print("Battery level: "); Serial.print(level); Serial.println("%");
   this->_battery_level = level;
-  sendOscMessage("/battery", level);
+  // sendOscMessage("/battery", level);
   if (level <= 30)
     return (LOW);
   else
