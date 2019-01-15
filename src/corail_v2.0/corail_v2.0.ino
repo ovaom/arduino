@@ -70,7 +70,7 @@ void  getPressure() {
       adc[i] = 0;
     }
     if (abs(adc[i] - prev_adc[i]) > ADC_SENSITIVITY) {
-      data[i] = ovaom.mapfloat((float)adc[i], 0.0, 1050.0, 0.0, 1.0);
+      data[i] = ovaom.mapfloat((float)adc[i], 0.0, 1000.0, 0.0, 1.0);
       ovaom.dataLimiter(&data[i], 0.0, 1.0);
       ovaom.sensorDataHasChanged = true;
       prev_adc[i] = adc[i];

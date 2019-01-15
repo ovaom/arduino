@@ -56,9 +56,9 @@ void loop(){
     readBMP180();
     ovaom.getMpuValues();
     ovaom.checkObjectState();
+    ovaom.sendObjectState();
     if (ovaom.getObjectState() == IDLE && millis() - prevCalibMillis > 30000)
       pressureAutoCalib();
-    ovaom.sendObjectState();
     ovaom.presetButton(); 
     sendData();
   }
@@ -76,18 +76,21 @@ void loop(){
 #define JOYSTICK_THRESHOLD 12
 int32_t joystick[2], prevJoystick[2];
 void readJoystick() {
-  for(int16_t i = 0; i < 2; i++) {
+  for(int16_t i = 0; i < 2; i++) 
+  {
     joystick[i] = ads.readADC_SingleEnded(i);
-    if ( abs(joystick[i] - prevJoystick[i]) > JOYSTICK_THRESHOLD ){
-      data[i] = ovaom.mapfloat((float)joystick[i], 0.0, 1200.0, 0.0, 1.0);
+    if ( abs(joystick[i] - prevJoystick[i]) > JOYSTICK_THRESHOLD )
+    {
+      data[i] = ovaom.mapfloat((float)joystick[i], 55.0, 1000.0, 0.0, 1.0);
       ovaom.dataLimiter(&data[i], 0.0, 1.0);
       ovaom.sensorDataHasChanged = true;
       prevJoystick[i] = joystick[i];
     } 
   }
+  // Serial.printf("Joystick: %d \t %d \n", joystick[0], joystick[1]);
 }
 
-#define PRESSURE_THRESHOLD 4.0
+#define PRESSURE_THRESHOLD 3.1
 #define P_BUFF_LEN 10
 double  avgPressure, prev_avgPressure;
 int16_t pressureBuff[P_BUFF_LEN];
@@ -114,11 +117,11 @@ void readBMP180()
 {
   pressureBuff[buffIdx] = (int16_t)(bmp.readPressure() - referencePressure);
   buffIdx = (buffIdx + 1) % P_BUFF_LEN;
-  double avgPressure = ovaom.getRMS(pressureBuff, P_BUFF_LEN);
+  double avgPressure = ovaom.getAvg(pressureBuff, P_BUFF_LEN);
 
   if ( abs(avgPressure - prev_avgPressure) > PRESSURE_THRESHOLD) {
     Serial.println(avgPressure);
-    data[2] = ovaom.mapfloat((float)avgPressure, 0.0, 300.0, 0.0, 1.0);
+    data[2] = ovaom.mapfloat((float)avgPressure, 0.0, 500.0, 0.0, 1.0);
     ovaom.dataLimiter(&data[2], 0.0, 1.0);
     ovaom.sensorDataHasChanged = true;
     prev_avgPressure = avgPressure;
