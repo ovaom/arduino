@@ -2,6 +2,9 @@
 
 ##[Unreleased]
 
+
+## [2.1.3] 2019-01-16
+
 ### Changed
 - Clean checkObjectState(), fix instant detection bug
 - Make IDLE and ACTIVE sensor data much more reactive
