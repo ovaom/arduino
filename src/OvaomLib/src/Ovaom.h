@@ -9,7 +9,7 @@
 #include <Wire.h>
 
 // Software Versions
-#define LIB_VERSION "Ovaom Lib 2.1.2"
+#define LIB_VERSION "Ovaom Lib 2.1.3"
   
 // Hardware PCB Versions 
 // Differences in hardware wiring of preset button and LED
@@ -20,11 +20,13 @@
 
 // Tweak these parameters to ajust sensitivity
 #define SAMPLING_FREQ 			15 		// in milliseconds
-#define AVERAGING_BUFFER_SIZE	100 	// values are averaged in an int array of this size 
-#define ACTIVE_THRESHOLD 		1200
-#define IDLE_THRESHOLD			100
-#define ACTIVE_TRIG_TIME 		500
-#define IDLE_TRIG_TIME 			500
+#define AVERAGING_BUFFER_SIZE	5 	// values are averaged in an int array of this size 
+// Detect ACTIVE
+#define ACTIVE_THRESHOLD 		15000
+#define ACTIVE_TRIG_TIME 		400
+// Detect IDLE
+#define IDLE_THRESHOLD			90
+#define IDLE_TRIG_TIME 			300
 
 
 // Object State
@@ -91,6 +93,7 @@ public:
 	double getRMS(int16_t *a, int16_t len);
 
 	bool  sensorDataHasChanged = false;
+	bool  sensorIsActive = false;
 
 private:
 	const int			_objectUID;
@@ -142,6 +145,9 @@ private:
 	int16_t           	_ledState = LOW;
 	int16_t			  	_ledON = 1;
 	int16_t			 	_ledOFF = 0;
+
+	// Battery
+	int16_t				_battery_level;
 
 };
 

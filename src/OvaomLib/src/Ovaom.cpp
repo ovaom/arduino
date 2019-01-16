@@ -51,7 +51,7 @@ void Ovaom::sendPing() {
   unsigned long currentMillis = millis();
   if (currentMillis - _prevPing > 1000) {
     OSCMessage m("/ping");
-    m.add(_objectUID).add(getObjectState());
+    m.add(_objectUID).add(getObjectState()).add(_battery_level) ;
     sendOscMessage(&m);
     _prevPing = millis();
   }
@@ -169,16 +169,27 @@ void Ovaom::checkObjectState() {
   double avg = getAvg(_mpu_buffer, _mpu_buffer_max);
 
   // Serial.printf("%d %d %d %d\n", 0, ACTIVE_THRESHOLD, IDLE_THRESHOLD, (int)avg);
-
-  if (avg > ACTIVE_THRESHOLD)
-    _instantObjectState = ACTIVE;
-  else if (_objectState == ACTIVE && sensorDataHasChanged) { 
-    _instantObjectState = ACTIVE;
+  // Serial.printf("%d %d %d\n", 0, IDLE_THRESHOLD, (int)avg);
+  
+  switch (_objectState)
+  {
+    case ACTIVE:
+      if (avg > IDLE_THRESHOLD || this->sensorDataHasChanged || this->sensorIsActive)
+        _instantObjectState = ACTIVE;
+      else if (avg < IDLE_THRESHOLD )
+        _instantObjectState = IDLE;
+      break;
+    
+    case IDLE:
+      if (avg > ACTIVE_THRESHOLD) 
+        _instantObjectState = ACTIVE;
+      else if (avg < IDLE_THRESHOLD || avg < ACTIVE_THRESHOLD)
+        _instantObjectState = IDLE;
+      break;
+  
+    default:
+      break;
   }
-  else if (_objectState == ACTIVE && avg > IDLE_THRESHOLD)
-    _instantObjectState = ACTIVE;
-  else if (avg < IDLE_THRESHOLD)
-    _instantObjectState = IDLE;
 
   if (_instantObjectState != _prevInstantState)
   {
@@ -201,7 +212,7 @@ void Ovaom::checkObjectState() {
       _stableStateTime = millis();
     }
   }
-  // Serial.printf("%u %u\n", _instantObjectState, _objectState);
+  Serial.printf("%u %u\n", _instantObjectState, _objectState);
   _prevInstantState = _instantObjectState;
 }
 
@@ -282,7 +293,7 @@ void Ovaom::updateLed() {
   switch (displayMode)
   {
     case CONNECTING:
-      if (currentMillis - _prevLedMillis > 250 ) 
+      if (currentMillis - _prevLedMillis > 50 ) 
       {
         _prevLedMillis = currentMillis;
         if (_ledState == _ledOFF)
@@ -301,29 +312,23 @@ void Ovaom::updateLed() {
       break;
     
     case LOW_BATTERY:
-      // if (currentMillis - _prevLedMillis > 50 ) 
-      // {
-      //   _prevLedMillis = currentMillis;
-      //   if (_ledState == _ledOFF)
-      //     _ledState = _ledON;
-      //   else
-      //     _ledState = _ledOFF;
-      // }
+      if (currentMillis - _prevLedMillis > 50 ) 
+      {
+        _prevLedMillis = currentMillis;
+        if (_ledState == _ledOFF)
+          _ledState = _ledON;
+        else
+          _ledState = _ledOFF;
+      }
       break;
 
     case DEBUG_ACTIVE:
-    if (currentMillis - _prevLedMillis > 50 ) 
-    {
-      _prevLedMillis = currentMillis;
-      if (_ledState == _ledOFF)
-        _ledState = _ledON;
-      else
-        _ledState = _ledOFF;
-    }
+      _ledState = _ledON;
+        break;
     break;
 
     case DEBUG_IDLE:
-    if (currentMillis - _prevLedMillis > 200 ) 
+    if (currentMillis - _prevLedMillis > 700 ) 
     {
       _prevLedMillis = currentMillis;
       if (_ledState == _ledOFF)
@@ -339,8 +344,8 @@ void Ovaom::updateLed() {
   digitalWrite(_ledPin, _ledState);
 }
 
-int Ovaom::batteryLevel() {
- 
+int Ovaom::batteryLevel() 
+{ 
   // read the battery level from the ESP8266 analog in pin.
   // analog read level is 10 bit 0-1023 (0V-1V).
   // our 1M & 220K voltage divider takes the max
@@ -363,8 +368,9 @@ int Ovaom::batteryLevel() {
   level = map(level, 690, 780, 0, 100); //empirical v3
 
   // Serial.print("Battery level: "); Serial.print(level); Serial.println("%");
-  sendOscMessage("/battery", level);
-  if (level <= 20)
+  this->_battery_level = level;
+  // sendOscMessage("/battery", level);
+  if (level <= 30)
     return (LOW);
   else
     return (HIGH);

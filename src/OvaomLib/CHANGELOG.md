@@ -3,6 +3,15 @@
 ##[Unreleased]
 
 
+## [2.1.3] 2019-01-16
+
+### Changed
+- Clean checkObjectState(), fix instant detection bug
+- Make IDLE and ACTIVE sensor data much more reactive
+- Shake objects to wake them up
+- Objects go to sleep faster
+- Objects don't go to sleep when sensors are being touched
+
 ##[2.1.2] 2019-01-05
 
 ### Added 

@@ -62,19 +62,26 @@ void loop(){
 
 #define ADC_SENSITIVITY 8
 int16_t adc[3], prev_adc[3];
-void  getPressure() {
-  for(int16_t i = 0; i < 3; i++) {
+void  getPressure() 
+{
+  ovaom.sensorIsActive = false;
+  for(int16_t i = 0; i < 3; i++) 
+  {
     adc[i] = ads.readADC_SingleEnded(i);
     // Serial.printf("ADC[%d]: %d\n", i, adc[i]);
-    if (adc[i] > 2000) {
+    if (adc[i] > 2000) 
+    {
       adc[i] = 0;
     }
-    if (abs(adc[i] - prev_adc[i]) > ADC_SENSITIVITY) {
+    if (abs(adc[i] - prev_adc[i]) > ADC_SENSITIVITY) 
+    {
       data[i] = ovaom.mapfloat((float)adc[i], 0.0, 1000.0, 0.0, 1.0);
       ovaom.dataLimiter(&data[i], 0.0, 1.0);
       ovaom.sensorDataHasChanged = true;
       prev_adc[i] = adc[i];
     }
+    if (data[i] > 0.008)
+      ovaom.sensorIsActive = true;
   }
 }
 
