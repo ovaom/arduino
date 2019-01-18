@@ -36,6 +36,7 @@ void Ovaom::connectWifi()
     updateLed();
 	}
 
+  WiFi.setOutputPower(0);
 	Serial.println("");
 	Serial.println("WiFi connected");
 	Serial.println("IP address: ");
