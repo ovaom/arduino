@@ -9,7 +9,7 @@
 #include <Wire.h>
 
 // Software Versions
-#define LIB_VERSION "Ovaom Lib 2.1.3"
+#define LIB_VERSION "Ovaom Lib 2.1.4"
   
 // Hardware PCB Versions 
 // Differences in hardware wiring of preset button and LED
