@@ -2,6 +2,9 @@
 
 ##[Unreleased]
 
+## [2.1.4] 2019-01-22
+### Changed
+- Set wifi output power to minimum to save battery
 
 ## [2.1.3] 2019-01-16
 
