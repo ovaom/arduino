@@ -2,6 +2,11 @@
 
 ##[Unreleased]
 
+
+## [2.1.5] 2019-01-24
+### Changed
+- Don't send `/presetChange` if object is IDLE
+
 ## [2.1.4] 2019-01-22
 ### Changed
 - Set wifi output power to minimum to save battery
