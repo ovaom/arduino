@@ -86,13 +86,16 @@ OSCMessage params("/object/0/params");
 void sendData() {
   // if (ovaom.getObjectState() == IDLE)
   //   ovaom.sensorDataHasChanged = false;
-  if (ovaom.sensorDataHasChanged) {
+  if (ovaom.sensorDataHasChanged) 
+  {
     ovaom.sensorDataHasChanged = false;
     params.add(data[0]).add(data[1]).add(data[2]);
     ovaom.sendOscMessage(&params);
   }
-  if (ovaom.presetButtonChanged && ovaom.getObjectState() == ACTIVE) {
+  if (ovaom.presetButtonChanged) 
+  {
     ovaom.presetButtonChanged = false;
-    ovaom.sendOscMessage("/object/" + String(OBJECT_UID) + "/presetChange");
+    if (ovaom.getObjectState() == ACTIVE)
+      ovaom.sendOscMessage("/object/" + String(OBJECT_UID) + "/presetChange");
   }
 }

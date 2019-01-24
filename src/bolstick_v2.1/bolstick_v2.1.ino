@@ -34,9 +34,9 @@ void setup(){
   ovaom.setupMPU(0x68);
   ovaom.setupPresetButton();
   Wire.begin(4,5);
-  if (!bmp.begin()) {
-	Serial.println("Could not find a valid BMP085 sensor, check wiring!");
-	while (1) {}
+  if (!bmp.begin(BMP085_STANDARD)) {
+    Serial.println("Could not find a valid BMP085 sensor, check wiring!");
+    while (1) {}
   }
   pressureAutoCalib();
 }
@@ -141,8 +141,9 @@ void sendData()
       params.add(data[0]).add(data[1]).add(data[2]);
       ovaom.sendOscMessage(&params);
     }
-    if (ovaom.presetButtonChanged && ovaom.getObjectState() == ACTIVE) {
+    if (ovaom.presetButtonChanged) {
       ovaom.presetButtonChanged = false;
-      ovaom.sendOscMessage("/object/" + String(OBJECT_UID) + "/presetChange");
+      if (ovaom.getObjectState() == ACTIVE)
+        ovaom.sendOscMessage("/object/" + String(OBJECT_UID) + "/presetChange");
     }
 }
