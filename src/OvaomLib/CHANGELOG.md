@@ -2,6 +2,10 @@
 
 ##[Unreleased]
 
+## [2.1.6] 2019-01-24
+### Changed
+- Fixed: don't send `/presetChange` if object is IDLE
+- Bolstick: read BMP in STANDARD mode which is faster
 
 ## [2.1.5] 2019-01-24
 ### Changed
