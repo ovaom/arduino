@@ -96,7 +96,7 @@ void sendData() {
     params.add(data[0]).add(data[1]).add(data[2]);
     ovaom.sendOscMessage(&params);
   }
-  if (ovaom.presetButtonChanged) {
+  if (ovaom.presetButtonChanged && ovaom.getObjectState() == ACTIVE) {
     ovaom.presetButtonChanged = false;
     ovaom.sendOscMessage("/object/" + String(OBJECT_UID) + "/presetChange");
   }
