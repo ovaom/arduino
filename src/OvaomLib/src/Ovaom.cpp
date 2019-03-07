@@ -180,7 +180,7 @@ void Ovaom::checkObjectState() {
       else if (avg < IDLE_THRESHOLD )
         _instantObjectState = IDLE;
       break;
-    
+
     case IDLE:
       if (avg > ACTIVE_THRESHOLD) 
         _instantObjectState = ACTIVE;
@@ -202,14 +202,14 @@ void Ovaom::checkObjectState() {
     {
       // => Object is IDLE //
       _objectState = IDLE;
-      displayMode = DEBUG_IDLE;
+      // displayMode = DEBUG_IDLE;
       _stableStateTime = millis();
     }
     else if (_instantObjectState == ACTIVE && millis() - _stableStateTime > ACTIVE_TRIG_TIME) 
     {
       // => Object is ACTIVE //
       _objectState = ACTIVE;
-      displayMode = DEBUG_ACTIVE;
+      // displayMode = DEBUG_ACTIVE;
       _stableStateTime = millis();
     }
   }
